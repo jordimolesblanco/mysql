@@ -5,7 +5,8 @@ Good question! I wouldn't do this just for fun.
 The goal is to migrate from an old version of MySQL to the newest available (or at least to a newer one).
 - First you copy the data to a newer version of MySQL/MariaDB/Percona.
 - Then you setup replication.
-- Then you make clones of the new replica and do as much testing as you please.
+- Then you make clones of the new replica and do as much testing as you please. Don't run tests on the replica, since
+doing so will break replication.
 - Then you turn the new replica into master and point your application to the new server.
 - Finally you enjoy your new MySQL with very little downtime.
 
@@ -46,7 +47,7 @@ This needs proper monitoring and quick decision making if necessary.
 
 ## Initial steps depending on data source
 
-####Do you have an old replica already?
+#### Do this if you have an old replica already, otherwise go to [I don't have any slave](#do-this-if-you-have-no-slaves)
 
 Great news! Most likely, you'll be able to copy the data from your existent replica without any downtime on the master.
 
@@ -57,7 +58,7 @@ Follow these simple steps:
 replica for a while until all the data is copied over, but if it's not the case see
 [Copy Data To Slave](#copy-data-to-slave) section.
 
-#### If it's your first replica
+#### Do this if you have no slaves
 
 If you don't have any slave server yet, you will have to bring MySQL down and change your my.cnf to enable
 replication. However, don't take the opportunity to change other values in the old server,
@@ -101,20 +102,6 @@ replication between such different versions. Then I ran the upgrade and replicat
 5. Monitor replication for a few hours. It may start without issues but fail after a few minutes/hours.
 6. Done.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Copy Data To Slave
 
 There are many options to copy your data in a safe way (that is making a consistent copy that will not change during
@@ -126,7 +113,7 @@ LVM, then you don't need other tools. You simply snapshot the partition, mount i
 snapshot the partition and then mount the snapshot and copy the data.
 
 Their documentation is not great, but you can find out more about it here:
-http://wiki.r1soft.com/display/LTR1D/Hot+Copy
+[R1Soft Hot Copy](#http://wiki.r1soft.com/display/LTR1D/Hot+Copy)
 
 Regardless of the tool you use, just follow these steps **_only in master server_**:
 
@@ -277,7 +264,7 @@ Master_SSL_Verify_Server_Cert: No
     ```bash
     mysql> change master to master_host='10.10.10.1', master_user='replication_user', master_password='yourpasswordhere', master_log_file='mysql-bin.84894', master_log_pos=9545728, MASTER_USE_GTID=no;
     ```
-    :bangbang: Here are the important things you should know about this command:
+    Here are the important things you should know about this command:
         - master_host is the master MySQL server.
         - master_user is the user you created for replication.
         - master_password is the password you entered for the replication user.
