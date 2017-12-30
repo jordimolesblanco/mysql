@@ -264,7 +264,8 @@ Master_SSL_Verify_Server_Cert: No
     ```bash
     mysql> change master to master_host='10.10.10.1', master_user='replication_user', master_password='yourpasswordhere', master_log_file='mysql-bin.84894', master_log_pos=9545728, MASTER_USE_GTID=no;
     ```
-    Here are the important things you should know about this command:
+    :bangbang: Here are the important things you should know about this command:
+
         - master_host is the master MySQL server.
         - master_user is the user you created for replication.
         - master_password is the password you entered for the replication user.
